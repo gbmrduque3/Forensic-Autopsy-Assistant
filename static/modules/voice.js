@@ -14,6 +14,7 @@ const Voice = (() => {
     let onNavigate = null;
     let onReadStep = null;
     let onStatus = null;
+    let contextCaptureId = null; // When set, voice notes go to this capture
 
     // ── Pip sound via AudioContext ────────────────────────────
     function playPip(freq = 880, duration = 0.12) {
@@ -148,17 +149,29 @@ const Voice = (() => {
         try { recognition.start(); } catch (_) { }
         playPip();
         if (onStatus) onStatus('🎙️ Micrófono activo – Esperando comandos', 'active');
+        const wave = document.getElementById('voice-wave');
+        if (wave) wave.classList.remove('inactive');
     }
 
     function stop() {
         listening = false;
         if (recognition) try { recognition.stop(); } catch (_) { }
         if (onStatus) onStatus('Micrófono inactivo', 'idle');
+        const wave = document.getElementById('voice-wave');
+        if (wave) wave.classList.add('inactive');
     }
 
     function isListening() { return listening; }
 
-    return { init, start, stop, isListening, speak, playPip };
+    function setContextMode(captureId) {
+        contextCaptureId = captureId;
+    }
+
+    function getContextCaptureId() {
+        return contextCaptureId;
+    }
+
+    return { init, start, stop, isListening, speak, playPip, setContextMode, getContextCaptureId };
 })();
 
 window.Voice = Voice;

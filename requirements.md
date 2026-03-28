@@ -52,11 +52,11 @@ El sistema se divide en tres capas principales:
 
 Responsable de:
 
--   Gestión de API
--   Autenticación de usuarios
--   Almacenamiento de datos
--   Procesamiento de imágenes
--   Gestión de registros forenses
+-   Gestión de API REST y WebSockets
+-   Autenticación de usuarios persistente
+-   Almacenamiento de datos (SQLite/SQLAlchemy)
+-   Procesamiento de imágenes y metadatos
+-   Gestión de registros forenses y sesiones en vivo
 
 ### Frontend
 
@@ -93,13 +93,13 @@ El backend se encargará de la lógica del sistema y gestión de datos.
 
 ### Tecnologías
 
--   Python
--   FastAPI
+-   Python 3.10+
+-   FastAPI (REST & WebSockets)
 -   SQLite
--   SQLAlchemy
--   Jinja2
--   Pydantic
--   Pillow (PIL)
+-   SQLAlchemy (ORM)
+-   Jinja2 (Templating)
+-   Pydantic (Schemas)
+-   UUID (Gestión de identificadores únicos)
 
 ------------------------------------------------------------------------
 
@@ -111,13 +111,11 @@ Encargado de la experiencia del usuario.
 
 **Autenticación** - Registro - Inicio de sesión - Control de sesiones
 
-**Cámara Forense** - Captura de fotografías - Guías de incisión mediante
-IA
+**Cámara Forense Avanzada** - Captura de fotografías - Guías de incisión mediante IA - Anotación espacial de hallazgos (marcadores)
 
-**Control por Voz** - Reconocimiento de comandos - Navegación sin
-contacto
+**Control por Voz Contextual** - Reconocimiento de comandos - Navegación sin contacto - Dictado de notas directo a capturas
 
-**Cuaderno Privado** - Registro de observaciones - Almacenamiento local
+**Cuaderno & Analíticas** - Registro de observaciones persistente - Estadísticas dinámicas con CSS puro - Buscador avanzado
 
 ### Tecnologías
 
@@ -176,23 +174,27 @@ Permite:
 
 # 7. Requerimientos Funcionales
 
-RF1 --- El sistema debe permitir registro de usuarios.
+RF1 [DOC] --- El sistema debe permitir registro de usuarios con roles definidos.
 
-RF2 --- El sistema debe permitir inicio de sesión seguro.
+RF2 [DOC] --- El sistema debe permitir inicio de sesión seguro y persistente.
 
-RF3 --- El usuario podrá crear registros de autopsia.
+RF3 [DOC] --- El usuario podrá crear registros de autopsia y capturas vinculadas.
 
-RF4 --- El sistema permitirá capturar fotografías desde la cámara.
+RF4 [DOC] --- El sistema permitirá capturar fotografías y gestionarlas en una galería.
 
-RF5 --- El sistema mostrará guías visuales de incisión.
+RF5 [OK] --- El sistema mostrará guías visuales de incisión.
 
-RF6 --- El sistema reconocerá comandos de voz.
+RF6 [DOC] --- El sistema reconocerá comandos de voz para manos libres.
 
-RF7 --- El sistema permitirá guardar notas privadas.
+RF7 [DOC] --- El sistema permitirá guardar notas privadas y notas vinculadas a capturas.
 
-RF8 --- El sistema permitirá consultar una base de conocimiento.
+RF8 [DOC] --- El sistema permitirá consultar una base de conocimiento compartida.
 
-RF9 --- El sistema funcionará en dispositivos móviles y escritorio.
+RF9 [DOC] --- El sistema funcionará en dispositivos móviles y escritorio (Responsive).
+
+RF10 [NUEVO] --- El sistema debe permitir colaboración en tiempo real entre Supervisor y Operador vía WebSockets.
+
+RF11 [NUEVO] --- El sistema debe generar visualizaciones de datos (Estadísticas) basadas en los hallazgos registrados.
 
 ------------------------------------------------------------------------
 
@@ -287,13 +289,12 @@ Ventajas:
 
 ------------------------------------------------------------------------
 
-# 11. Posibles Extensiones Futuras
+# 11. Hoja de Ruta e Implementaciones Futuras
 
--   Exportación automática de reportes
--   Integración con sistemas hospitalarios
--   Análisis avanzado de imágenes
--   Historial completo de autopsias
--   Sistema de aprendizaje para estudiantes
+-   **IA Forense Avanzada**: Integración de visión artificial para detección automática de órganos y medición de heridas.
+-   **Protocolos Globales**: Implementación de estándares internacionales (Minnesota, Virchow) mediante módulos de procedimiento específicos.
+-   **Exportación de Reportes**: Generación de informes médico-legales en PDF integrando capturas, notas y mapas de anotaciones.
+-   **Seguridad Biométrica**: Integración de reconocimiento facial o huella para acceso rápido en entornos estériles.
 
 ------------------------------------------------------------------------
 
