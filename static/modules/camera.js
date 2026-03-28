@@ -53,9 +53,20 @@ const Camera = (() => {
         }
     }
 
-    async function start() {
+    async function getDevices() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return [];
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        return devices.filter(d => d.kind === 'videoinput');
+    }
+
+    async function start(deviceId = null) {
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            const constraints = { 
+                video: deviceId ? { deviceId: { exact: deviceId } } : true, 
+                audio: false 
+            };
+            stop(); // Always stop previous stream first
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
             videoEl.srcObject = stream;
             videoEl.play();
             videoEl.onloadedmetadata = () => {
@@ -73,25 +84,19 @@ const Camera = (() => {
         if (stream) stream.getTracks().forEach(t => t.stop());
         if (animFrame) cancelAnimationFrame(animFrame);
         stream = null;
+        if (ctx) ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
     }
 
     function drawLoop() {
         if (!stream) return;
-        ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
-
-        // Draw live video frame
         ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-
-        // Send frame to MediaPipe Pose
+        
         if (pose && videoEl.readyState >= 2 && !isProcessing) {
             isProcessing = true;
-            pose.send({ image: videoEl }).finally(() => {
-                isProcessing = false;
-            });
+            pose.send({ image: videoEl }).finally(() => { isProcessing = false; });
         }
 
         if (poseLandmarks && window.drawConnectors) {
-            // Dibuja en tono leve el esqueleto
             ctx.save();
             ctx.globalAlpha = 0.35;
             window.drawConnectors(ctx, poseLandmarks, window.POSE_CONNECTIONS, { color: '#ffffff', lineWidth: 2 });
@@ -100,16 +105,16 @@ const Camera = (() => {
         }
 
         if (overlayActive) {
-            if (poseLandmarks) {
-                drawDynamicYIncision(poseLandmarks);
-            } else {
-                drawYIncision(); // Fallback to static if no pose
-            }
+            if (poseLandmarks) drawDynamicYIncision(poseLandmarks);
+            else drawYIncision();
         }
-
+        
         dashOffset = (dashOffset + 0.5) % 20;
+        pulseScale = 1 + Math.sin(Date.now() / 300) * 0.2;
         animFrame = requestAnimationFrame(drawLoop);
     }
+
+    let pulseScale = 1;
 
     function drawYIncision() {
         const w = canvasEl.width;
@@ -118,13 +123,13 @@ const Camera = (() => {
         ctx.save();
 
         // Glow shadow
-        ctx.shadowColor = '#ff3b5c';
-        ctx.shadowBlur = 14;
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 10 * pulseScale;
 
-        ctx.setLineDash([10, 6]);
+        ctx.setLineDash([8, 6]);
         ctx.lineDashOffset = -dashOffset;
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#ff3b5c';
+        ctx.lineWidth = 2 * pulseScale;
+        ctx.strokeStyle = '#06b6d4';
         ctx.lineCap = 'round';
 
         for (const line of Y_LINES) {
@@ -137,9 +142,9 @@ const Camera = (() => {
         // Label
         ctx.shadowBlur = 0;
         ctx.setLineDash([]);
-        ctx.font = 'bold 13px Inter, sans-serif';
-        ctx.fillStyle = 'rgba(255,59,92,0.9)';
-        ctx.fillText('✦ Incisión en Y (Estática)', 12, h - 14);
+        ctx.font = '600 13px Inter, sans-serif';
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.8)';
+        ctx.fillText('✦ Guía de Incisión (Estática)', 16, h - 20);
 
         ctx.restore();
     }
@@ -173,12 +178,12 @@ const Camera = (() => {
         ];
 
         ctx.save();
-        ctx.shadowColor = '#00ffaa';
-        ctx.shadowBlur = 14;
-        ctx.setLineDash([10, 6]);
+        ctx.shadowColor = '#14b8a6';
+        ctx.shadowBlur = 12 * pulseScale;
+        ctx.setLineDash([8, 6]);
         ctx.lineDashOffset = -dashOffset;
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = '#00ffaa'; // Cyan/green for dynamic
+        ctx.lineWidth = 3 * pulseScale;
+        ctx.strokeStyle = '#14b8a6'; 
         ctx.lineCap = 'round';
 
         for (const line of dynamicLines) {
@@ -190,9 +195,9 @@ const Camera = (() => {
 
         ctx.shadowBlur = 0;
         ctx.setLineDash([]);
-        ctx.font = 'bold 13px Inter, sans-serif';
-        ctx.fillStyle = 'rgba(0,255,170,0.9)';
-        ctx.fillText('✦ Incisión en Y (AI Seguimiento)', 12, h - 14);
+        ctx.font = '600 13px Inter, sans-serif';
+        ctx.fillStyle = 'rgba(20, 184, 166, 0.9)';
+        ctx.fillText('✦ Guía de Incisión (IA Dinámica)', 16, h - 20);
         ctx.restore();
     }
 
@@ -205,7 +210,7 @@ const Camera = (() => {
         overlayActive = show;
     }
 
-    return { init, start, stop, capture, toggleOverlay };
+    return { init, start, stop, capture, toggleOverlay, getDevices };
 })();
 
 window.Camera = Camera;

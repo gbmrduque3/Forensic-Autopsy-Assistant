@@ -6,9 +6,14 @@ Aplicación web de apoyo para prácticas de autopsia forense. Diseñada para **p
 
 ## 🚀 Cómo ejecutar
 
-> **Importante:** La app necesita un servidor local para funcionar (cámara y micrófono no funcionan abriendo el archivo directamente).
-
-Luego abre **http://localhost:3000** en Chrome o Edge y permite el acceso a cámara y micrófono.
+1. Asegúrate de tener **Python 3.10+** instalado.
+2. Navega a la carpeta del proyecto.
+3. Inicia el backend con: 
+   ```bash
+   python -m uvicorn backend.main:app --port 3000 --reload
+   ```
+4. Abre **http://localhost:3000** en Chrome o Edge.
+5. Regístrate o usa las credenciales de dueño.
 
 ---
 
@@ -24,36 +29,26 @@ Luego abre **http://localhost:3000** en Chrome o Edge y permite el acceso a cám
 
 ---
 
-## 🗂️ Funcionalidades
+## 🗂️ Superpoderes del Sistema
 
-### 📷 Cámara & Incisión
-- Feed en vivo de la cámara con overlay de **incisión en Y** (líneas rojas entrecortadas).
-- Captura de foto con botón o comando de voz **"capturar"**.
+### 📷 Captura & Anotación Avanzada (Fase 1)
+- **Anotación Espacial**: Haz clic en cualquier parte de la captura para añadir marcadores visuales.
+- **Multi-Notas por Captura**: Cada hallazgo puede tener múltiples notas (voz o manual).
+- **Sugerencias Técnicas**: Acceso rápido a términos médicos-legales (Equimosis, Laceración).
+- **Galería Persistente**: Las capturas se guardan en el servidor vinculadas a tu cuenta.
 
-### 🎙️ Control por Voz
-Activa el micrófono con el botón o diciendo **"Anótalo, Mario Hugo"**.
+### 📊 Analíticas Forenses (Fase 2)
+- **Estadísticas Dinámicas**: Visualización de métricas de sesión mediante gráficos CSS premium (Dona, Barras, Timeline).
+- **Dashboard de Control**: Resumen inmediato de actividad del sistema para administradores.
 
-| Comando | Acción |
-|---|---|
-| `"hallazgo: [descripción]"` | Registra hallazgo y sugiere el paso siguiente |
-| `"siguiente paso"` | Avanza al siguiente paso |
-| `"paso anterior"` | Retrocede al paso anterior |
-| `"capturar"` | Toma una foto |
-| `"leer paso"` | Lee el paso actual en voz alta |
-| `"anotar: [texto]"` | Guarda nota privada en el cuaderno |
+### 📋 Colaboración Real-time (Fase 3)
+- **Sesiones en Vivo**: Creación de códigos de sesión `SES-XXXX` para sincronización multi-usuario.
+- **Workflow Supervisor-Operador**: Los pasos del procedimiento se aprueban o rechazan en tiempo real.
+- **Chat de Instrucciones**: Comunicación directa dentro de la sesión de autopsia.
 
-### 📚 Base de Conocimientos
-- Visible para todos los roles.
-- Solo **profesionales aprobados** pueden escribir o editar entradas.
-- El **dueño** aprueba o revoca permisos desde el Panel Admin.
-
-### 📓 Mi Cuaderno *(solo estudiantes)*
-- Notas completamente privadas, solo visibles para el estudiante.
-- Se nutren automáticamente con los comandos de voz `"anotar: ..."`.
-
-### 🛠️ Panel Admin *(solo dueño)*
-- Ver lista de profesionales registrados.
-- Aprobar o revocar permisos de escritura.
+### 🎙️ Control por Voz Contextual
+- El asistente inteligente detecta si estás editando una captura para asociar las notas dictadas automáticamente a esa imagen.
+- Comando principal: **"Anótalo, Mario Hugo"**.
 
 ---
 
@@ -82,11 +77,15 @@ Antigravity/
 
 ## ⚙️ Tecnologías
 
-- **HTML5 / CSS3 / JavaScript** (100% frontend, sin servidor)
-- **Web Speech API** — reconocimiento de voz y texto a voz (TTS)
-- **MediaDevices API** — acceso a cámara
-- **Canvas API** — overlay de incisión animado
-- **localStorage** — persistencia de datos
+- **Backend**: Python + FastAPI (REST API & WebSockets).
+- **Base de Datos**: SQLite con SQLAlchemy ORM.
+- **Frontend**: Vanilla JS moderno, HTML5 Semántico, Tailwind CSS.
+- **Visualización**: Estadísticas 100% CSS (sin librerías pesadas).
+- **IA & APIs**: 
+  - MediaPipe (Pose estimation para guías).
+  - Web Speech API (Dictado y Comandos).
+  - Canvas API (Overlay forense).
+  - Persistent User Context (Database-backed sessions).
 
 ---
 
@@ -102,6 +101,14 @@ Antigravity/
 - **RNF-01: Privacidad Estudiantil.** El cuaderno de notas debe ser estrictamente privado por usuario (localStorage).
 - **RNF-02: UI Moderna.** Uso de **Tailwind CSS** para una interfaz limpia, responsiva y profesional.
 - **RNF-03: Disponibilidad Offline-first.** Funcionamiento basado en tecnologías de navegador y almacenamiento local.
+
+---
+
+## 🚀 Hoja de Ruta (Próximas Mejoras)
+
+1. **Análisis de Imagen con IA Forense**: Implementación de modelos de visión para detección automática de lesiones y órganos.
+2. **Generador de Reportes PDF**: Exportación automática de actas de autopsia con fotos y anotaciones.
+3. **Módulo de Toxicología**: Registro especializado de muestras y cadenas de custodia.
 
 ---
 
